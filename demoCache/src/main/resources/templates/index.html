@@ -8,11 +8,40 @@
     <span th:text="cacheTest">hello</span>
 
     <form method="get" action="/index" >
-        <input type="text" name="inputVal" th:value="${inputVal}"><button>click</button>
+        <input type="text" name="inputVal" th:value="${inputVal}" placeholder="my로 시작하면 개인 키 등록됨"><button>click</button>
     </form>
 
     <hr>
-    <pre th:text="${code}">no data yet</pre>
+    <div style="display: flex;">
+        <div>
+            <span th:text="${getUsercache}"></span>
+            <pre th:text="${code}">no data yet</pre>
+        </div>
+        <div>
+                <div>== 보유 키 ==</div>
+            <ul>
+                <li th:each="key : ${userCacheKeys}">
+                    [[${key}]]
+                    <button th:key="${key}" onclick="delCache(event, this.getAttribute('key'))" >x</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+<script>
+async  function delCache(event, key) {
+    const res = await fetch('/delCache', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 'key' : key })
+    });
+
+    const text = await res.text();
+
+    if(text === '1'){
+        event.target.parentElement.remove();
+    }
+  }
+</script>
 
 </body>
 </html>

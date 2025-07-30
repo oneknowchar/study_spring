@@ -1,6 +1,8 @@
 package com.demoCache.config;
 
 import java.util.Arrays;
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.cache.CacheManager;
@@ -14,12 +16,16 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 @Configuration
 public class CacheConfig {
     public static final String PUBCOD = "PUBCOD";
+    public static final String USERCACHE = "USERCACHE";
+
+    public static Set<String> USERCACHE_KEYS = new ConcurrentSkipListSet<>();
+
 
     @Bean
     public CacheManager cacheManager() {
         SimpleCacheManager cacheManager = new SimpleCacheManager();
         cacheManager.setCaches(Arrays.asList(
-            new CaffeineCache("userCache", caffeineCacheBuilder().build()),
+            new CaffeineCache(USERCACHE, caffeineCacheBuilder().build()),
             new CaffeineCache(PUBCOD, caffeineCacheBuilder().build())
         ));
         return cacheManager;
