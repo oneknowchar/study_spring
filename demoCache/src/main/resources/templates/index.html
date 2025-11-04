@@ -5,8 +5,11 @@
 <title>Insert title here</title>
 </head>
 <body>
-    <span th:text="cacheTest">hello</span>
-
+    <div th:text="cacheTest">hello</div>
+    <div>
+    	<a href="jsonIndex">json file Read & Deserialize</a>
+    </div>
+	
     <form method="get" action="/index" >
         <input type="text" name="inputVal" th:value="${inputVal}" placeholder="my로 시작하면 개인 키 등록됨"><button>click</button>
     </form>

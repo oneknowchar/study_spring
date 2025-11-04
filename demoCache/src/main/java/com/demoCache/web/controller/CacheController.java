@@ -20,6 +20,11 @@ import lombok.RequiredArgsConstructor;
 public class CacheController {
     private final CacheService cacheService;
 
+    @GetMapping("")
+    public String slash() {
+    	return "index";
+    }
+    
     @GetMapping("/index")
     public String index(Model model, @RequestParam(required = false, value = "inputVal") String inputVal) {
         model.addAttribute("userCacheKeys", CacheConfig.USERCACHE_KEYS);
