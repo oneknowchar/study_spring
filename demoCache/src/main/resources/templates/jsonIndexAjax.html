@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>지역 선택 + 확인/초기화</title>
+</head>
+<body>
+
+<h3>지역 선택</h3>
+
+<div id="address-region-selector"></div>
+
+<!-- 선택 결과 영역 -->
+<div id="selected-codes" style="margin-top: 10px;"></div>
+
+<script>
+    // 1. 데이터 fetch
+    const fetchRegion = async () => {
+        return await (await fetch('/jsonIndexJson', { method: 'POST' })).json();
+    };
+
+    // 2. 렌더링
+    const renderRegionSelector = (region) => {
+        const container = document.querySelector('#address-region-selector');
+
+        container.innerHTML = `
+            <select id="sido">
+                <option value="전체">전체</option>
+                ${region.sido.map(s => `<option value="${s.CTPRVN_CD}">${s.CTP_KOR_NM}</option>`).join('')}
+            </select>
+
+            <select id="sig" disabled>
+                <option value="전체">전체</option>
+            </select>
+
+            <select id="emd" disabled>
+                <option value="전체">전체</option>
+            </select>
+
+            <button id="confirmBtn">확인</button>
+            <button id="resetBtn">초기화</button>
+        `;
+
+        return region;
+    };
+
+    // 3. 이벤트 바인딩
+    const bindRegionEvents = (region) => {
+        const sido = document.querySelector('#sido');
+        const sig  = document.querySelector('#sig');
+        const emd  = document.querySelector('#emd');
+        const confirmBtn = document.querySelector('#confirmBtn');
+        const resetBtn = document.querySelector('#resetBtn');
+        const selectedDiv = document.querySelector('#selected-codes');
+
+        // 시도 변경
+        sido.addEventListener('change', (e) => {
+            const code = e.target.value;
+            sig.value = '전체';
+            emd.value = '전체';
+            emd.disabled = true;
+
+            sig.innerHTML = '<option value="전체">전체</option>';
+            if (code === '전체') {
+                sig.disabled = true;
+                return;
+            }
+            sig.disabled = false;
+
+            const frag = document.createDocumentFragment();
+            region.sig
+                .filter(s => s.SIG_CD.startsWith(code))
+                .forEach(s => {
+                    const opt = document.createElement('option');
+                    opt.value = s.SIG_CD;
+                    opt.textContent = s.SIG_KOR_NM;
+                    frag.appendChild(opt);
+                });
+            sig.appendChild(frag);
+        });
+
+        // 시군구 변경
+        sig.addEventListener('change', (e) => {
+            const code = e.target.value;
+            emd.value = '전체';
+            emd.innerHTML = '<option value="전체">전체</option>';
+
+            if (code === '전체') {
+                emd.disabled = true;
+                return;
+            }
+
+            emd.disabled = false;
+
+            const frag = document.createDocumentFragment();
+            region.emd
+                .filter(em => em.EMD_CD.startsWith(code))
+                .forEach(em => {
+                    const opt = document.createElement('option');
+                    opt.value = em.EMD_CD;
+                    opt.textContent = em.EMD_KOR_NM;
+                    frag.appendChild(opt);
+                });
+            emd.appendChild(frag);
+        });
+
+        // 확인 버튼 클릭
+		confirmBtn.addEventListener('click', () => {
+		    const formatEmd = emd.value
+		        .split('')          // 각 문자로 분리
+		        .map((c, idx) => {
+		            // 자리마다 공백 또는 구분자 추가 (예: 2^3^3 형태)
+		            // 예: 1,1,1,0,1,0,1,0,1 -> 11 10 101 또는 자리마다 구분
+		            return c + ((idx === 1 || idx === 4 ) ? ' ' : ''); 
+		        })
+		        .join('');
+
+		    selectedDiv.innerHTML = `
+		        <input type="text" readonly value="시도: ${sido.value}" style="margin-right:5px;">
+		        <input type="text" readonly value="시군구: ${sig.value}" style="margin-right:5px;">
+		        <input type="text" readonly value="읍면동: ${formatEmd}">
+		    `;
+		});
+
+
+        // 초기화 버튼 클릭
+        resetBtn.addEventListener('click', () => {
+            sido.value = '전체';
+            sig.value = '전체';
+            emd.value = '전체';
+            sig.disabled = true;
+            emd.disabled = true;
+            selectedDiv.innerHTML = ''; // 하단 인풋 제거
+        });
+    };
+
+    // 4. 초기화
+    const init = async () => {
+        const regionData = await fetchRegion();
+        renderRegionSelector(regionData);
+        bindRegionEvents(regionData);
+    };
+
+    init();
+</script>
+</body>
+</html>

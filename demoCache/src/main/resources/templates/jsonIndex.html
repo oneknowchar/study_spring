@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
+
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
@@ -7,6 +8,90 @@
 <body>
 	<div>test</div>
 	
-	<textarea rows="100" cols="100" th:text="${jsonMap}">test</textarea>
+	<div>
+		<select id="sido">
+			<option>전체</option>
+			<option th:each="sido : ${sidoProp}" th:value="${sido.CTPRVN_CD}" th:text="${sido.CTP_KOR_NM}"></option>
+		</select>
+		
+		<select id="sig" disabled>
+			<option>전체</option>
+			<option th:each="sig : ${sigProp}" th:value="${sig.SIG_CD}" th:text="${sig.SIG_KOR_NM}" style="display: none;"></option>
+		</select>
+		
+		<select id="emd" disabled>
+			<option>전체</option>
+			<option th:each="emd : ${emdProp}" th:value="${emd.EMD_CD}" th:text="${emd.EMD_KOR_NM}" style="display: none;"></option>
+		</select>
+		
+		<button id="resetBtn"> 초기화</button>
+	</div>
+	
+<script>
+	const sidoSelec = document.querySelector("#sido");
+	const sigSelec = document.querySelector("#sig");
+	const emdSelec = document.querySelector("#emd");
+	const resetBtn = document.querySelector("#resetBtn");
+	
+	
+	// 시도
+	sidoSelec.addEventListener('change', (e)=>{
+		const thisCode = e.target.value;
+		sigSelec.value = '전체'
+		emdSelec.value = '전체'
+		
+		if(thisCode == '전체'){
+			sigSelec.disabled = true;
+			emdSelec.disabled = true;
+			return;
+		}
+		
+		sigSelec.disabled = false;
+
+		document.querySelectorAll("#sig > option").forEach(el => {
+		    if (el.value === "전체" || el.value === "") {
+		        el.style.display = "";
+		        return;
+		    }
+
+		    // this.value 로 비교
+		    el.style.display = el.value.startsWith(thisCode) ? "" : "none";
+		});
+	});
+	
+	// 시군구
+	sigSelec.addEventListener('change', (e)=>{
+		const thisCode = e.target.value;
+		emdSelec.value = '전체'
+		
+		if(thisCode == '전체'){
+			emdSelec.disabled = true;
+			return;
+		}
+		
+		emdSelec.disabled = false;
+
+		document.querySelectorAll("#emd > option").forEach(el => {
+		    if (el.value === "전체" || el.value === "") {
+		        el.style.display = "";
+		        return;
+		    }
+
+		    // this.value 로 비교
+		    el.style.display = el.value.startsWith(thisCode) ? "" : "none";
+		});
+	});
+	
+	resetBtn.addEventListener('click', (e)=>{
+		sidoSelec.value="전체";
+		sigSelec.value="전체";
+		emdSelec.value="전체";
+		
+		sigSelec.disabled = true;
+		emdSelec.disabled = true;
+	});
+	
+</script>
+	
 </body>
 </html>
