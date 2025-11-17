@@ -11,106 +11,46 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.RequiredArgsConstructor;
+
 @Controller
+@RequiredArgsConstructor
 public class JsonController {
-
-    private final CacheController cacheController;
-
-	List<Map<String, Object>> sidoProp = new ArrayList<>();
-	List<Map<String, Object>> sigProp = new ArrayList<>();
-	List<Map<String, Object>> emdProp = new ArrayList<>();
-
-
-    JsonController(CacheController cacheController) {
-        this.cacheController = cacheController;
-    }
+	// 임시 캐싱
+	Map<String, Object> regionCodes = new HashMap<>();	// 행정구역 코드 selectBox 랜더
 	
-	
-	@GetMapping("/jsonIndex")
+	@GetMapping("/addrCodeData")
 	@ResponseBody
-	public List<Map<String, Object>> index(@RequestParam(name = "jsonFileName", required = false) String jsonFileName) throws IOException {
-		if(jsonFileName == null) {
-			jsonFileName = "sido.json";
-		}else {
-			jsonFileName += ".json";	//sido, sig, emd
-		}
-		
-		String dir = "X:/PROJECT/[2025.09] 티키타카/지도/HTML_소스코드/다건 선택_커스텀/json/";
-		
-		List<Map<String, Object>> props = new ArrayList<>();
-		
-		extractedData(dir, jsonFileName, props);
-		
-		return props;
-		
-	}
-	
-	@GetMapping("/jsonIndexHtml")
-	public String jsonIndexHtml(Model model, @RequestParam(name = "jsonFileName", required = false) String jsonFileName) throws IOException {
-		String dir = "X:/PROJECT/[2025.09] 티키타카/지도/HTML_소스코드/다건 선택_커스텀/json/";
-		
-		//List<Map<String, Object>> sidoProp = new ArrayList<>();
-		//List<Map<String, Object>> sigProp = new ArrayList<>();
-		//List<Map<String, Object>> emdProp = new ArrayList<>();
-		
+	public ResponseEntity<Map<String, Object>> addrCodeData() throws IOException {
 		// 데이터 역직렬화
-		extractedData(dir, "sido.json", sidoProp);
-		extractedData(dir, "sig.json", sigProp);
-		extractedData(dir, "emd.json", emdProp);
+		extractedData("sido");
+		extractedData("sig");
+		extractedData("emd");
 		
-		// 렌더 데이터
-		model.addAttribute("sidoProp", sidoProp);
-		model.addAttribute("sigProp", sigProp);
-		model.addAttribute("emdProp", emdProp);
-		
-		return "jsonIndex";
-	}
-	@GetMapping("/jsonIndexAjax")
-	public String jsonIndexAjax() {
-		return "jsonIndexAjax";
-	}
-	
-	@PostMapping("/jsonIndexJson")
-	@ResponseBody
-	public Map<String, Object> jsonIndexJson() throws IOException {
-		String dir = "X:/PROJECT/[2025.09] 티키타카/지도/HTML_소스코드/다건 선택_커스텀/json/";
-		
-		//List<Map<String, Object>> sidoProp = new ArrayList<>();
-		//List<Map<String, Object>> sigProp = new ArrayList<>();
-		//List<Map<String, Object>> emdProp = new ArrayList<>();
-		
-		// 데이터 역직렬화
-		extractedData(dir, "sido.json", sidoProp);
-		extractedData(dir, "sig.json", sigProp);
-		extractedData(dir, "emd.json", emdProp);
-		
-		// 렌더 데이터
-		Map<String, Object> region = new HashMap<>();
-		region.put("sido", sidoProp);
-		region.put("sig", sigProp);
-		region.put("emd", emdProp);
-		return region;
+		// 행정구역코드
+		return new ResponseEntity<Map<String,Object>>(regionCodes, HttpStatus.OK);
 	}
 
-	private void extractedData(String dir, String jsonFileName, List<Map<String, Object>> propsList)
+	private void extractedData(String regionLevel)
 			throws IOException, StreamReadException, DatabindException {
 		ObjectMapper objectMapper = new ObjectMapper();
+		String dir = "X:/PROJECT/[2025.09] 티키타카/지도/HTML_소스코드/다건 선택_커스텀/json/";
 		
-		if(propsList.size() > 0 ) return;
+		if(regionCodes.get(regionLevel) != null) return;
 		
-		
-		Path path = Paths.get(dir, jsonFileName);
+		List<Map<String, Object>> propsList = new ArrayList<>();
+
+		Path path = Paths.get(dir, regionLevel + ".json");
 		
 		// 파일 여부 체크
 		if(Files.exists(path)) {
@@ -129,18 +69,17 @@ public class JsonController {
 					propsList.add(properties);
 				}
 				
-				System.out.println(propsList.size());
-				
-				if(jsonFileName.startsWith("sido")) {
+				if(regionLevel.equals("sido")) {
 					propsList.sort(Comparator.comparing(m -> (String) m.get("CTP_KOR_NM")));	// 지역명순 정렬
-				} else if(jsonFileName.startsWith("sig")) {
+				} else if(regionLevel.equals("sig")) {
 					propsList.sort(Comparator.comparing(m -> (String) m.get("SIG_KOR_NM")));	// 지역명순 정렬
-				} else if(jsonFileName.startsWith("emd")) {
+				} else if(regionLevel.equals("emd")) {
 					propsList.sort(Comparator.comparing(m -> (String) m.get("EMD_KOR_NM")));	// 지역명순 정렬
 				} else {
 					throw new IllegalArgumentException("features는 List가 아닙니다.");
 				}
 				
+				regionCodes.put(regionLevel, propsList);
 			}
 		}
 	}

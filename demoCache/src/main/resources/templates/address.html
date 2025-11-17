@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	
+	<!-- Title -->
+	<title>Wedo - Ecommerce Mobile App Template ( Bootstrap + PWA )</title>
+
+	<!-- Meta -->
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, minimal-ui, viewport-fit=cover">
+	<meta name="theme-color" content="#FE4487">
+	<meta name="author" content="DexignZone">
+	<meta name="robots" content="index, follow"> 
+	<meta name="keywords" content="android, ios, mobile, application template, progressive web app, ui kit, multiple color, dark layout">
+	<meta name="description" content="Revolutionize your online store with our Ecommerce App Template. Seamless shopping, secure payments, and personalized recommendations for an exceptional user experience">
+	<meta property="og:title" content="Wedo - Ecommerce Mobile App Template ( Bootstrap + PWA )">
+	<meta property="og:description" content="Revolutionize your online store with our Ecommerce App Template. Seamless shopping, secure payments, and personalized recommendations for an exceptional user experience.">
+	<meta property="og:image" content="https://wedo.dexignzone.com/xhtml/social-image.png">
+	<meta name="format-detection" content="telephone=no">
+
+	<!-- Favicons Icon -->
+	<link rel="shortcut icon" type="image/x-icon" href="assets/images/favicon.png">
+	
+    
+    <!-- Global CSS -->
+	<link href="assets/vendor/bootstrap-select/dist/css/bootstrap-select.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="assets/vendor/bootstrap-touchspin/dist/jquery.bootstrap-touchspin.min.css">
+	<link rel="stylesheet" href="assets/vendor/swiper/swiper-bundle.min.css">
+    
+	<!-- Stylesheets -->
+    <link rel="stylesheet" class="main-css" type="text/css" href="assets/css/style.css">
+	
+    <!-- Google Fonts -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+	<style>
+    .region-select-panel {
+        position: absolute;
+        top: 60px; /* 헤더(고정 높이 약 60px) 아래로 간격 확보 */
+        left: 15px;
+        right: 15px;
+        width: calc(100% - 30px);
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 6px;
+        background-color: rgba(255, 255, 255, 0.95);
+        border-radius: 8px;
+        padding: 8px 10px;
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    /* select 크기 균등 분배 */
+    .region-select-panel select {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    /* 버튼은 select보다 살짝 작게 */
+    .region-select-panel button {
+        white-space: nowrap;
+        flex: 0 0 auto;
+    }
+
+    /* 모바일 대응 */
+    @media (max-width: 576px) {
+        .region-select-panel {
+            top: 60px;
+            gap: 4px;
+            padding: 6px 8px;
+        }
+        .region-select-panel select {
+            font-size: 14px;
+        }
+        .region-select-panel button {
+            font-size: 14px;
+            padding: 4px 8px;
+        }
+    }
+
+
+    .region-select-panel select {
+        flex: 1 1 auto;
+        min-width: 0;
+        height: 28px; /* 높이 직접 지정 */
+        padding: 2px 6px; /* 내부 여백 축소 */
+        font-size: 13px; /* 글자 크기 축소 */
+        line-height: 1.2; /* 텍스트 수직 정렬 안정화 */
+    }
+
+    /* 버튼도 동일 비율로 줄이기 */
+    .region-select-panel button {
+        height: 28px;
+        font-size: 13px;
+        padding: 2px 8px;
+    }
+    /* 지도 위 패널은 배경만 보이고 마우스 이벤트 무시 */
+    .region-select-panel {
+        pointer-events: auto; /* 버튼/선택은 클릭 가능 */
+    }
+
+    /* 지도 위 버튼만 클릭 가능, 나머지 영역 무시 */
+    .custom-zoom-buttons {
+        pointer-events: auto; 
+    }
+
+    /* 지도 그 외 영역은 이벤트 전달 */
+    #map {
+        pointer-events: auto;
+    }
+    </style>
+</head>   
+<body>
+<div class="page-wrapper">
+    
+	<!-- Preloader -->
+	<div id="preloader">
+		<div class="loader">
+			<div class="load-circle"><div></div><div></div></div>
+		</div>
+	</div>
+    <!-- Preloader end-->
+	
+	<!-- Header -->
+	<header class="header header-fixed">
+		<div class="container">
+			<div class="header-content">
+				<div class="left-content">
+					<a href="javascript:void(0);" class="back-btn">
+						<i class="icon feather icon-chevron-left"></i>
+					</a>
+					<h6 class="title">위치 설정</h6>
+				</div>
+				<div class="mid-content">
+				</div>
+				<div class="right-content">
+				</div>
+			</div>
+		</div>
+	</header>
+	<!-- Header -->
+	
+    <!-- Page Content Start -->
+    <div class="page-content overflow-hidden d-flex flex-column" style="height: 100vh;">
+        <!-- 지도 영역 (50%) -->
+        <div class="position-relative" style="height: 50vh;">
+            <div id="map" class="w-100 h-100"></div>
+
+            <div class="region-select-panel position-absolute">
+                <select class="form-select form-select-sm">
+                    <option value="all">시/도</option>
+                    <option value="seoul">서울특별시</option>
+                    <option value="busan">부산광역시</option>
+                </select>
+                <select class="form-select form-select-sm">
+                    <option value="all">시/군/구</option>
+                    <option value="gangnam">강남구</option>
+                    <option value="jung">중구</option>
+                </select>
+                <select class="form-select form-select-sm">
+                    <option value="all">읍/면/동</option>
+                    <option value="sipjeong">십정동</option>
+                    <option value="other">기타</option>
+                </select>
+                <button class="btn btn-primary btn-sm">확인</button>
+            </div>
+
+            <!-- 지도 위 우측 하단 플러스/마이너스 버튼 -->
+            <div class="custom-zoom-buttons position-absolute" style="right: 10px; bottom: 10px; display: flex; flex-direction: column; gap: 5px; z-index: 1000;">
+                <button id="zoom-in" class="btn btn-sm btn-success border border-white" onclick="map.setLevel(map.getLevel() - 1);" style="font-size: 17px; font-weight: 700; width: 35px; height: 35px;">+</button>
+                <button id="zoom-out" class="btn btn-sm btn-success border border-white" onclick="map.setLevel(map.getLevel() + 1);" style="font-size: 17px; font-weight: 700; width: 35px; height: 35px;">-</button>
+            </div>
+        </div>
+
+
+        <!-- 주소 영역 (50%) -->
+        <div class="flex-grow-0 overflow-auto bg-white" style="height: 50vh;">
+            <div class="container py-3">
+                <!-- 탭 버튼 -->
+                <ul class="nav nav-pills nav-fill mb-4 gap-2" id="locationTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active border border-primary" id="buy-tab" data-bs-toggle="pill" data-bs-target="#buy" type="button" role="tab" aria-selected="true">
+                            지역 필터
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link border border-primary" id="sell-tab" data-bs-toggle="pill" data-bs-target="#sell" type="button" role="tab" aria-selected="false" tabindex="-1">
+                            거래 장소
+                        </button>
+                    </li>
+                </ul>
+                <div class="tab-content" id="locationTabContent">
+                    <!-- 지역 필터 -->
+                    <div class="tab-pane fade show active" id="buy" role="tabpanel" aria-labelledby="buy-tab">
+                        <h6 class="title">지역 필터 관리</h6>
+                        <div class="mb-3 text-muted small">
+                            <i class="icon feather icon-alert-circle"></i> 상품 검색 시 자주 사용하는 장소입니다. <span class="float-end text-dark">1/5</span>
+                        </div>
+                        <div class="text-end mb-3">
+                            <button type="button" class="btn btn-sm btn-warning">저장하기</button>
+                        </div>
+                        <div class="card address-card">
+                            <div class="card-body d-flex justify-content-between align-items-center">
+                                <span>서울특별시 강남구 삼성동</span>
+                                <span class="delete-x text-danger fw-bold" style="cursor:pointer; font-size:1.2rem;">×</span>
+                            </div>
+                        </div>
+
+                        <div class="card address-card">
+                            <div class="card-body d-flex justify-content-between align-items-center">
+                                <span>서울특별시 강남구 삼성동</span>
+                                <span class="delete-x text-danger fw-bold" style="cursor:pointer; font-size:1.2rem;">×</span>
+                            </div>
+                        </div>
+                        <div class="card address-card">
+                            <div class="card-body d-flex justify-content-between align-items-center">
+                                <span>서울특별시 강남구 삼성동</span>
+                                <span class="delete-x text-danger fw-bold" style="cursor:pointer; font-size:1.2rem;">×</span>
+                            </div>
+                        </div>
+                        <div class="card address-card">
+                            <div class="card-body d-flex justify-content-between align-items-center">
+                                <span>서울특별시 강남구 삼성동</span>
+                                <span class="delete-x text-danger fw-bold" style="cursor:pointer; font-size:1.2rem;">×</span>
+                            </div>
+                        </div>
+                        <div class="card address-card">
+                            <div class="card-body d-flex justify-content-between align-items-center">
+                                <span>서울특별시 강남구 삼성동</span>
+                                <span class="delete-x text-danger fw-bold" style="cursor:pointer; font-size:1.2rem;">×</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 거래 장소 -->
+                    <div class="tab-pane fade" id="sell" role="tabpanel" aria-labelledby="sell-tab">
+                        <h6 class="title">거래 장소 관리</h6>
+                        <div class="mb-3 text-muted small">
+                            <i class="icon feather icon-alert-circle"></i> 물품 거래시 자주 사용하는 장소입니다. 
+                            <span class="float-end text-dark">1/5</span>
+                        </div>
+                        <div class="text-end mb-3">
+                            <button type="button" class="btn btn-sm btn-warning">저장하기</button>
+                        </div>
+                        <div class="card mb-3 shadow-sm position-relative">
+                            <div class="card-body">
+                                <h6 class="card-title mb-1">#회사</h6>
+                                <p class="card-text text-muted small mb-0">서울특별시 강남구 테헤란로 123</p>
+
+                                <!-- 수정/삭제 아이콘 버튼 -->
+                                <div class="position-absolute bottom-0 end-0 p-2">
+                                    <button class="btn btn-sm btn-outline-danger" title="삭제">
+                                        <i class="feather icon-trash-2"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-primary me-1" title="수정">
+                                        <i class="feather icon-edit"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card mb-3 shadow-sm position-relative">
+                            <div class="card-body pb-5"><!-- pb-5: 버튼 공간 확보 -->
+                                <!-- 제목 -->
+                                <input type="text" class="form-control form-control-sm mb-2" value="#집">
+
+                                <!-- 주소 -->
+                                <div class="mb-1 text-muted">서울특별시 강남구</div>
+                                <input type="text" class="form-control form-control-sm" value="테헤란로 123">
+                            </div>
+
+                            <!-- 수정/삭제 아이콘 버튼: 카드 기준 절대 위치 -->
+                            <div class="position-absolute bottom-0 end-0 p-2">
+                                <button class="btn btn-sm btn-outline-danger" title="삭제">
+                                    <i class="feather icon-trash-2"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-primary me-1" title="수정">
+                                    <i class="feather icon-edit"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card mb-3 shadow-sm position-relative">
+                            <div class="card-body pb-5"><!-- pb-5: 버튼 공간 확보 -->
+                                <!-- 제목 -->
+                                <input type="text" class="form-control form-control-sm mb-2" value="#집">
+
+                                <!-- 주소 -->
+                                <div class="mb-1 text-muted">서울특별시 강남구</div>
+                                <input type="text" class="form-control form-control-sm" value="테헤란로 123">
+                            </div>
+
+                            <!-- 수정/삭제 아이콘 버튼: 카드 기준 절대 위치 -->
+                            <div class="position-absolute bottom-0 end-0 p-2">
+                                <button class="btn btn-sm btn-outline-danger" title="삭제">
+                                    <i class="feather icon-trash-2"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-primary me-1" title="수정">
+                                    <i class="feather icon-edit"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card mb-3 shadow-sm position-relative">
+                            <div class="card-body pb-5"><!-- pb-5: 버튼 공간 확보 -->
+                                <!-- 제목 -->
+                                <input type="text" class="form-control form-control-sm mb-2" value="#집">
+
+                                <!-- 주소 -->
+                                <div class="mb-1 text-muted">서울특별시 강남구</div>
+                                <input type="text" class="form-control form-control-sm" value="테헤란로 123">
+                            </div>
+
+                            <!-- 수정/삭제 아이콘 버튼: 카드 기준 절대 위치 -->
+                            <div class="position-absolute bottom-0 end-0 p-2">
+                                <button class="btn btn-sm btn-outline-danger" title="삭제">
+                                    <i class="feather icon-trash-2"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-primary me-1" title="수정">
+                                    <i class="feather icon-edit"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card mb-3 shadow-sm position-relative">
+                            <div class="card-body pb-5"><!-- pb-5: 버튼 공간 확보 -->
+                                <!-- 제목 -->
+                                <div class="mb-1 text-muted">서울특별시 강남구</div>
+                                <input type="text" class="form-control form-control-sm mb-2" value="#집">
+
+                                <!-- 주소 -->
+                                <div class="mb-1 text-muted">서울특별시 강남구</div>
+                                <input type="text" class="form-control form-control-sm" value="테헤란로 123">
+                            </div>
+
+                            <!-- 수정/삭제 아이콘 버튼: 카드 기준 절대 위치 -->
+                            <div class="position-absolute bottom-0 end-0 p-2">
+                                <button class="btn btn-sm btn-outline-danger" title="삭제">
+                                    <i class="feather icon-trash-2"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-primary me-1" title="수정">
+                                    <i class="feather icon-edit"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Page Content End -->
+</div>  
+<!--**********************************
+    Scripts
+***********************************-->
+<script src="assets/js/jquery.js"></script>
+<script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="assets/vendor/swiper/swiper-bundle.min.js"></script><!-- Swiper -->
+<script src="assets/vendor/bootstrap-touchspin/dist/jquery.bootstrap-touchspin.min.js"></script><!-- Swiper -->
+<script src="assets/js/dz.carousel.js"></script><!-- Swiper -->
+<script src="assets/js/settings.js"></script>
+<script src="assets/js/custom.js"></script>
+
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=6f092e8f45ee81186bb6d8408f66a492&libraries=services,clusterer,drawing"></script>
+    <script>
+        let mapContainer = document.getElementById('map');
+        let mapOption = {
+                center: new kakao.maps.LatLng(37.566826, 126.9786567),
+                level: 12,
+				scaleControl: true     // 거리 표시 숨김
+            };
+        
+        let map = new kakao.maps.Map(mapContainer, mapOption);
+        let customOverlay = new kakao.maps.CustomOverlay({});
+
+        // 행정구역 레벨 상수
+        const ADMIN_LEVEL = {
+            SIDO: { CODE: 'SIDO', LEVEL: 12 },   // 시도 11~14(max)
+            SIG: { CODE: 'SIG', LEVEL: 10 },    // 시군구 7~10
+            EMD: { CODE: 'EMD', LEVEL: 6 },    // 읍면동 1~6
+        };
+
+        // 폴리곤 상수
+        const POLYGON = {
+            TYPE : {
+                MULTIPOLYGON: 'MultiPolygon',
+                POLYGON: 'Polygon',
+            },
+            STYLE : {
+                FILL_COLOR : '#3000ff',   // 선택된 폴리곤 색상
+                DEFAULT_COLOR : '#fff',   // 기본 폴리곤 색상
+                HOVER_COLOR : '#09f',     // 호버 폴리곤 색상
+                STROKE_COLOR : '#004c80', // 폴리곤 테두리 색상
+                FILL_OPACITY : 0.7, // 폴리곤 투명도
+                STROKE_WEIGHT : 2,  // 폴리곤 테두리 두께
+                STROKE_OPACITY : 0.8,   // 폴리곤 테두리 투명도
+            }
+        };
+
+        // jsonData, Lazy Load+ 캐싱처리
+        let polygonData = {
+            [ADMIN_LEVEL.SIDO.CODE]: [],    // 시도
+            [ADMIN_LEVEL.SIG.CODE]: [],     // 시군구
+            [ADMIN_LEVEL.EMD.CODE]: []      // 읍면동
+        };
+
+
+        let level = '';                 // 지도 줌 레벨
+        let detailMode = '';            // sido, sig, emd 줌 레벨
+        var areas = [];                 // 지역 정보 배열
+        let polygons = [];              // 지도에 표시된 폴리곤들
+        let isPolygonVisible  = true;   // 폴리곤 그려졌는지 여부
+        let isMarkerVisible  = true;   // 폴리곤 그려졌는지 여부
+        let selectedPolygonCodes = new Set();   // 지역코드 기반
+        
+        pageInit();
+
+        function pageInit(){
+            init(ADMIN_LEVEL.SIDO.CODE);    // START !!!
+        }
+
+        /**
+         * 지도 줌 레벨 변경 - 디테일 모드에 따라 폴리곤 변경
+         */
+        kakao.maps.event.addListener(map, 'zoom_changed', function () {
+            lastBounds = map.getBounds();
+            level = map.getLevel(); // 1 ~ 14
+
+            const currentDetailMode = detailMode || ADMIN_LEVEL.SIDO.CODE;
+            
+            // 새 디테일 모드 계산
+            detailMode = 
+                level <= 6 ? ADMIN_LEVEL.EMD.CODE // 읍면동
+                : [7, 8, 9, 10].includes(level) ? ADMIN_LEVEL.SIG.CODE     // 시군구
+                : ADMIN_LEVEL.SIDO.CODE; // 시도
+            
+            // 현재 디테일 모드와 같다면 렌더링 패스
+            if(currentDetailMode === detailMode) return;
+
+            console.log("줌 레벨:", level, "디테일 모드:", detailMode);
+
+            removePolygon();
+
+            init(ADMIN_LEVEL[detailMode].CODE);
+        });
+
+
+        /**
+         * 기존 폴리곤 제거 함수
+         */
+        function removePolygon() {
+            for (let i = 0; i < polygons.length; i++) {
+                polygons[i].setMap(null);
+            }
+            areas = [];
+            polygons = [];
+        }
+
+        /**
+         * GeoJSON 파일을 로딩하고 폴리곤을 그리는 초기화 함수
+         */
+        function init(adminLevelCode) {
+            console.time("폴리곤 그리기 시간");
+            if(isPolygonVisible === false) return;  // 폴리곤 숨김 상태면 패스
+            
+            areas = []; // areas 배열 초기화
+            
+            // 캐싱된 데이터 사용
+            if(polygonData[adminLevelCode].length > 0){
+                areas = polygonData[adminLevelCode];
+                drawPolygons(areas);
+                console.timeEnd("폴리곤 그리기 시간");
+                return;
+            }
+
+            const jsonFileName = adminLevelCode.toLowerCase();
+            $.getJSON(`../json/${jsonFileName}.json`)
+                .done(function (geojson) {
+                    if (!geojson || !geojson.features) return;
+
+                    var units = geojson.features;
+                    // areas = []; // areas 배열 초기화
+
+                    $.each(units, function (index, unit) {
+                        var coordinates = [];
+                        var name = '';
+
+                        if (unit.geometry && unit.geometry.coordinates) {
+                            let coords = unit.geometry.coordinates;
+                            let type = unit.geometry.type;
+
+                            if (type === POLYGON.TYPE.POLYGON) {
+                                let ob = {
+                                    name: '',
+                                    path: [],
+                                    location_CD: '',
+                                    type: ''
+                                };
+
+                                if (unit.properties) {
+                                    ob.name = unit.properties.SIG_KOR_NM || unit.properties.CTP_KOR_NM || unit.properties.EMD_KOR_NM || '';
+                                    ob.location_CD = unit.properties.CTPRVN_CD || unit.properties.SIG_CD || unit.properties.EMD_CD || -1; // 지역 코드 추가
+                                }
+
+                                $.each(coords[0], function (index, coordinate) {
+                                    if (coordinate && coordinate.length >= 2) {
+                                        ob.path.push(new kakao.maps.LatLng(coordinate[1], coordinate[0]));
+                                    }
+                                });
+
+                                if (ob.path.length > 0) areas.push(ob);
+
+                            } else if (type === POLYGON.TYPE.MULTIPOLYGON) {
+                                $.each(coords, function (i, polygon) {
+                                    let ob = {
+                                        name: '',
+                                        path: [],
+                                        type
+                                    };
+
+                                    if (unit.properties) {
+                                        ob.name = unit.properties.CTP_KOR_NM || unit.properties.SIG_KOR_NM || unit.properties.EMD_KOR_NM || '이름없음';
+                                        ob.location_CD = unit.properties.CTPRVN_CD || unit.properties.SIG_CD|| unit.properties.EMD_CD || -1; // 지역 코드 추가
+                                    }
+
+                                    $.each(polygon[0], function (index, coordinate) {
+                                        if (coordinate && coordinate.length >= 2) {
+                                            ob.path.push(new kakao.maps.LatLng(coordinate[1], coordinate[0]));
+                                        }
+                                    });
+
+                                    if (ob.path.length > 0) areas.push(ob);
+                                });
+                            }
+                        }
+
+                        var ob = new Object();
+                        ob.name = name;
+                        ob.path = [];
+
+                        // coordinates[0]가 배열인지 확인
+                        if (coordinates[0] && Array.isArray(coordinates[0])) {
+                            $.each(coordinates[0], function (index, coordinate) {
+                                if (coordinate && coordinate.length >= 2) {
+                                    ob.path.push(new kakao.maps.LatLng(coordinate[1], coordinate[0]));
+                                }
+                            });
+                        }
+
+                        if (ob.path.length > 0) {
+                            areas.push(ob);
+                        }
+                    });
+
+                    polygonData[adminLevelCode] = areas; // 캐싱 처리
+                    drawPolygons(areas); // 폴리곤 그리기
+                    console.timeEnd("폴리곤 그리기 시간");
+                })
+                .fail(function (jqxhr, textStatus, error) {
+                    console.error("JSON 파일 로딩 실패:", textStatus, error);
+                    console.error("파일 경로를 확인해주세요:", path);
+                });
+        }
+
+        
+
+        /**
+         * 모든 지역에 대해 폴리곤을 그리는 함수
+         */
+        function drawPolygons(areas) {
+            for (var i = 0, len = areas.length; i < len; i++) {
+                displayArea(areas[i]);
+            }
+        }
+
+        /**
+         * 폴리곤 토글 함수
+         */
+        function togglePolygonsBtnHandler(){
+            const btn = document.getElementById("togglePolygonsBtn");
+
+            if(isPolygonVisible){
+                hidePolyons();
+                btn.innerText = "폴리곤 노출";
+            } else {
+                showPolyons();
+                btn.innerText = "폴리곤 숨김";
+            }
+        }
+
+        /**
+         * 모든 폴리곤 숨김
+         */
+        function hidePolyons(){
+            isPolygonVisible = false;
+
+            polygons.forEach(polygon => {
+                polygon.setOptions({
+                    fillOpacity: 0,
+                    strokeOpacity: 0
+                });
+            });
+        }
+
+        /**
+         * 모든 폴리곤 노출
+         */
+        function showPolyons(){
+            isPolygonVisible = true;
+            
+            if(polygons.length === 0){
+                init(ADMIN_LEVEL[detailMode].CODE);
+                return;
+            }
+
+            polygons.forEach(polygon => {
+                polygon.setOptions({
+                    fillOpacity: POLYGON.STYLE.FILL_OPACITY,
+                    strokeOpacity: POLYGON.STYLE.STROKE_OPACITY
+                });
+            });
+        }
+
+        /**
+         * 지역 정보를 이용하여 폴리곤을 표시하는 함수
+         */
+        function displayArea(area) {
+            if (!area.path || area.path.length === 0) return;
+
+            const isSelected = selectedPolygonCodes.has(area.location_CD);  // 선택 상태 확인
+            const parentRegion_CD  = Array.from(selectedPolygonCodes).find(code => area.location_CD.startsWith(code));  // 상위 지역 포함 여부 확인
+
+            
+            if(parentRegion_CD){
+                selectedPolygonCodes.add(area.location_CD); // 초기 로딩 시 모든 폴리곤 선택  
+            }
+
+            var polygon = new kakao.maps.Polygon({
+                map: map,
+                path: area.path,
+                fillOpacity: POLYGON.STYLE.FILL_OPACITY,
+                strokeWeight: POLYGON.STYLE.STROKE_WEIGHT,
+                strokeColor: POLYGON.STYLE.STROKE_COLOR,
+                strokeOpacity: POLYGON.STYLE.STROKE_OPACITY,
+                fillColor: isSelected || parentRegion_CD ? POLYGON.STYLE.FILL_COLOR : POLYGON.STYLE.DEFAULT_COLOR
+            });
+            polygon.name = area.name;               // 카톡 폴리곤 obj에 이름 추가
+            polygon.location_CD = area.location_CD; // 카톡 폴리곤 obj에 지역 코드 추가
+            polygons.push(polygon);
+
+            // 폴리곤 마우스오버 - 오버레이 표시
+            // kakao.maps.event.addListener(polygon, 'mouseover', function (mouseEvent) {
+            //     lastLocationCd = area.location_CD;
+                
+            //     if (!selectedPolygonCodes.has(area.location_CD)) {
+            //         polygon.setOptions({ fillColor: POLYGON.STYLE.HOVER_COLOR }); // 선택되지 않은 폴리곤만 hover 색상
+            //     }
+                
+            //     // customOverlay.setContent('<div class="area">' + area.name + '</div>');
+            //     // customOverlay.setPosition(mouseEvent.latLng);
+            //     // customOverlay.setMap(map);
+            // });
+
+            // 폴리곤 마우스무브 - 오버레이 위치 이동
+            kakao.maps.event.addListener(polygon, 'mousemove', function (mouseEvent) {
+                customOverlay.setPosition(mouseEvent.latLng);
+            });
+
+            // 폴리곤 마우스아웃 - 원래 색상으로 복원
+            // kakao.maps.event.addListener(polygon, 'mouseout', function () {
+            //     // 선택되지 않은 폴리곤만 원래 색상으로
+            //     if (!selectedPolygonCodes.has(area.location_CD)) {
+            //         polygon.setOptions({ fillColor: POLYGON.STYLE.DEFAULT_COLOR });
+            //     }
+            //     customOverlay.setMap(null);
+            // });
+
+            // 폴리곤 클릭 - 폴리곤 선택 및 토글 기능 추가
+            kakao.maps.event.addListener(polygon, 'click', function (mouseEvent) {
+                console.log("폴리곤 클릭:", area.name, area.location_CD);
+                const parentRegion_CD  = Array.from(selectedPolygonCodes).find(code => area.location_CD.startsWith(code));  // 상위 지역 포함 여부 확인
+
+                if (selectedPolygonCodes.has(area.location_CD)) {
+                    // 선택 해제(기본) 상태로 변경
+                    selectedPolygonCodes.delete(area.location_CD);      // 선택 폴리곤 제거
+                    
+                    if(parentRegion_CD){
+                        selectedPolygonCodes.delete(parentRegion_CD); // 상위 지역도 선택 해제
+                    }
+
+                    polygons.forEach(polygon => {
+                        if (polygon.location_CD === area.location_CD) {
+                            polygon.setOptions({ fillColor: POLYGON.STYLE.DEFAULT_COLOR });
+                        }
+                    });
+                } else {
+                    selectedPolygonCodes.add(area.location_CD); // 선택된 폴리곤 추가
+
+                    polygons.forEach(polygon => {
+                        if (polygon.location_CD === area.location_CD) {
+                            polygon.setOptions({ fillColor: POLYGON.STYLE.FILL_COLOR });
+                        }
+                    });
+                }
+
+                map.panTo(mouseEvent.latLng);   // 클릭한 위치로 지도 중심 이동
+                console.log(`${area.name}  클릭됨!(${area.location_CD})`);
+            });
+        }
+    </script>
+</body>
+</html>
